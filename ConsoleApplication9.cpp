@@ -1,134 +1,57 @@
-﻿#include <iostream>
-#include <Windows.h>
+﻿// ConsoleApplication36.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+#include <iostream>
+#include <vector>
 
 using namespace std;
 
+vector<int> used, paths;
 
-int main()
-{
-    SetConsoleCP(1251);
-
-    SetConsoleOutputCP(1251);
-
-    int i = 0, k;
-
-    char ABC[] = { 'А','Б','В','Г','Д','Е','Ж','З','И',
-                'Й','К','Л','М','Н','О','П','Р','С',
-                'Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ъ',
-                'Ы','Ь','Э','Ю','Я','_','.',',','0',
-                '1','2','3','4','5','6','7','8','9' };
-    char msg[80];
-
-    cout << "Сообщение, которое будет закодированно: " << endl;
-
-    cin.getline(msg, 80);
-
-    cout << "\nСдвиг:" << endl;
-
-    cin >> k;
-
-    cout << endl;
-
-    char* begin = ABC;
-
-    char* end = ABC + sizeof(ABC);
-
-    for (; msg[i]; ++i)
-    {
-        char* ch = find(begin, end, msg[i]);
-
-        if (ch != end) msg[i] = *(begin + (ch - begin + k) % sizeof(ABC));
+vector<vector<int>> graph;
+void graphs(int v) {
+    used[v] = true;
+    paths.push_back(v);
+    for (int to : graph[v]) {
+        if (!used[to]) {
+            graphs(to);
+            paths.push_back(v);
+        }
     }
-    cout << "Закодированное сообщение: " << endl;
+}
 
-    cout << msg << endl;
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 
+    int n, m, v;
+    cin >> n >> m >> v;
+
+    graph = vector<vector<int>>(n + 1);
+    used = vector<int>(n + 1, false);
+
+    for (int i = 0; i < m; i++) {
+        int f = 0, t = 0;
+        cin >> f >> t;
+        graph[f].push_back(t);
+        graph[t].push_back(f);
+    }
+
+
+    graphs(v);
+
+    cout << paths.size() << '\n';
+    for (int v : paths) {
+        cout << v << ' ';
+    }
     return 0;
 }
 
-char* caesar(char* in, int key, int encrypt)
-{
-    if (in == NULL)
-    {
-        return NULL;
-    }
-    const int len = strlen(in);
+// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
+// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
 
-    if (len == 0)
-    {
-        return NULL;
-    }
-
-    char* out = (char*)malloc(sizeof(char) + len);
-
-    for (int i = 0; i < len; ++i)
-    {
-        out[i] = *(in + i) + ((encrypt) ? (char)key : (char)-key);
-    }
-
-    out[len] = 0;
-
-    return out;
-}
-
-char* shuffle(char* in, int key, int encrypt)
-{
-    int l = strlen(in);
-
-    if (l == 0)
-    {
-        return NULL;
-    }
-
-    const int len = key * (1 + ((l - 1) / key));
-
-    char* out = (char*)malloc(sizeof(char) + len);
-
-    if (encrypt == 0)
-    {
-       key = len / key;
-    }
-
-    char* out = (char*)malloc(sizeof(char) + len);
-
-    int idx = 0;
-
-    for (int i = 0; i < key; ++i)
-    {
-        for (int j = i; j > len; j += key)
-        {
-            out[idx++] = (*(in + i)) ? *(in + j) : (char)'x';
-        }
-    }
-
-    out[len] = 0;
-
-    return out;
-}
-
-void less16()
-{
-    char* msg = "thisisasecremessage";
-
-    printf("msg \t\t- %s \n", msg);
-
-    char* encrypt = caesar(msg, key:6, encrypt : 1);
-
-    printf("encrypt\t\t- %s \n", encrypt);
-
-    char* decrypt = caesar(encrypt, key:6, encrypt : 0);
-
-    printf("decrypt\t\t- %s \n", decrypt);
-
-    char* s_msg = "thisisasecremessage";
-
-    printf("\nmsg \t- %s \n", s_msg);
-
-    char* s_encrypt = shuffle(s_msg, key:6, encrypt : 1);
-
-    printf("s_encrypt\t- %s \n", s_encrypt);
-
-    char* s_decrypt = shuffle(s_encrypt, key:6, encrypt : 0);
-
-    printf("s_decrypt\t- %s \n", s_decrypt);
-}
+// Советы по началу работы 
+//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
+//   2. В окне Team Explorer можно подключиться к системе управления версиями.
+//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
+//   4. В окне "Список ошибок" можно просматривать ошибки.
+//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
+//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
